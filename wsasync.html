@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<header>
+  <script>
+    var ws = new WebSocket("ws://echo.websocket.org");
+    var rsps='';
+    var loop=0;
+    var cmds="A";
+    ws.onopen = function() {
+        //ws.send("Test!");
+      };
+
+      ws.onclose = function(ev) {
+        console.log("WebSocketClosed!");
+      };
+      ws.onerror = function(ev) {
+        console.log("WebSocketError!");
+      };
+
+      async function waitack(ack,ms){
+        return new Promise((resolve, reject)=>{
+          ws.onmessage = function(ev){
+            rsps += ev.data;
+            console.log('rx',rsps);
+            if(rsps.search(ack)>=0)
+              resolve('ok');
+            //else
+              //reject('ko');
+          };
+          setTimeout(function(){
+            reject("to");
+          }, ms);
+        });
+        //ws.send(msg);
+      }
+      function conn(){
+        ws.send("R\n");
+      };
+
+      async function sendA(){
+        ws.send("A");
+        for(var i=0;i<10;i++){
+          try{
+            await waitack('A',2000);
+            console.log("A",i);
+            rsps='';
+            ws.send(cmds);
+            cmds += i;
+          }catch(err){
+            console.log(err);
+          }
+        }
+      }
+ 
+    </script>
+  </header>
+  <body>
+    <p>
+      The Simplest Websocket Example
+      <button id="open" onclick="conn()">WS Con</button>
+      <button id="open" onclick="sendA()">WS Send</button>
+    </p>
+  </body>
+  </html>

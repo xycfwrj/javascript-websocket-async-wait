@@ -26,32 +26,31 @@
               resolve('ok');
             //else
               //reject('ko');
-          };
-          setTimeout(function(){
-            reject("to");
-          }, ms);
-        });
-        //ws.send(msg);
+            };
+            setTimeout(function(){
+              reject("to");
+            }, ms);
+          });
       }
       function conn(){
         ws.send("R\n");
       };
 
       async function sendA(){
-        ws.send("A");
+        ws.send("A0");
         for(var i=0;i<10;i++){
           try{
-            await waitack('A',2000);
+            await waitack('A'+i,1000);
             console.log("A",i);
             rsps='';
-            ws.send(cmds);
-            cmds += i;
+            ws.send('A'+(i+1));
+            //cmds += i;
           }catch(err){
             console.log(err);
           }
         }
       }
- 
+
     </script>
   </header>
   <body>
